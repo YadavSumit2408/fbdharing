@@ -1,0 +1,7 @@
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- This allows sharing files from external storage -->
+    <external-path name="external_files" path="." />
+
+    <!-- This allows sharing files from the app's cache directory -->
+    <cache-path name="cache_files" path="." />
+</paths>
