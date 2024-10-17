@@ -1,8 +1,6 @@
 import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -14,48 +12,39 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('Share to Messenger Example'),
+          title: Text('Share Link to Messenger Example'),
         ),
         body: Center(
           child: ElevatedButton(
             onPressed: () async {
-              try {
-                String filePath = await copyAssetToFileSystem('assets/playstore.png');
-                log("File path: $filePath");
-                await MessengerShare.shareMediaToMessenger(filePath, "image");
-              } catch (e) {
-                log("Error sharing to Messenger: $e");
-              }
+              // Directly using an image URL and description
+              String imageUrl = "https://share.oriflame.brandie.io/?id=bf096367-0d33-43ab-9d25-681ddec0896a"; // Replace with your actual image URL
+              String description = "Check out this image!"; // Your description text
+              log("Image URL: $imageUrl");
+              log("Description: $description");
+              await MessengerShare.shareImageLinkToMessenger(imageUrl, description);
             },
-            child: Text('Share to Messenger'),
+            child: Text('Share Image Link to Messenger'),
           ),
         ),
       ),
     );
-  }
-
-  Future<String> copyAssetToFileSystem(String assetPath) async {
-    final byteData = await rootBundle.load(assetPath);
-    final tempDir = await getTemporaryDirectory();
-    final file = File('${tempDir.path}/${assetPath.split('/').last}');
-    await file.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
-    return file.path;
   }
 }
 
 class MessengerShare {
   static const platform = MethodChannel('com.example.fbdharing/share');
 
-  static Future<void> shareMediaToMessenger(String filePath, String fileType) async {
-    log("Sharing media with path: $filePath and type: $fileType");
+  static Future<void> shareImageLinkToMessenger(String imageUrl, String description) async {
+    log("Sharing image link: $imageUrl with description: $description");
 
     try {
       await platform.invokeMethod('share', {
-        'filePath': filePath,
-        'fileType': fileType,
+        'imageUrl': imageUrl,
+        'description': description,
       });
     } on PlatformException catch (e) {
-      log("Failed to share media to Messenger: '${e.message}'.");
+      log("Failed to share image link to Messenger: '${e.message}'.");
     }
   }
 }
